@@ -1,6 +1,6 @@
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/qffo/python-project-83/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/qffo/python-project-83/actions)
-
+[![Actions Status](https://github.com/qffo/python-project-83/actions/workflows/pyci.yml/badge.svg)](https://github.com/qffo/python-project-83/actions)
 
 
 
