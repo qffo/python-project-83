@@ -1,0 +1,36 @@
+{% extends "index.html" %}
+
+{% block h1 %}Сайты:{% endblock %}
+
+{% block content %}
+<style>
+    .table tbody tr{
+        background-color: black;
+        color: white;
+    }
+</style>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover text-nowrap" data-test="urls">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Имя</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if urls %}
+                    {% for url in urls %}
+                        <tr>
+                            <td>
+                                <a>{{ url['id'] }}</a>
+                            </td>
+                            <td>
+                                <a>{{ url['name'] }}</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

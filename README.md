@@ -4,4 +4,4 @@
 
 
 
-<h2><a href="https://python-project-83-7rqr.onrender.com/">Посмотреть результат можно по ссылке, тут, клац</a></h2>
+<h2><a target="_blank" href="https://python-project-83-7rqr.onrender.com/">Посмотреть результат можно по ссылке, тут, клац</a></h2>
