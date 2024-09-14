@@ -85,8 +85,16 @@ def add_url():
             url_name=url_name
         ), 422
 
-    add_new_url(url_name)
+    # add_new_url(url_name)
     url_id = get_id_by_name(url_name)
+
+    if not url_id:
+        flash('Страница успешно добавлена', 'success')
+        add_new_url(url_name)
+        url_id = get_id_by_name(url_name)
+    else:
+        flash('Страница уже существует', 'info')
+
     return redirect(url_for('one_url', url_id=url_id), 302)
 
 
