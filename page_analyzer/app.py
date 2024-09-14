@@ -22,7 +22,10 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 
 def get_all_urls():
     urls = []
-    sql = "SELECT id, name FROM urls ORDER BY id DESC;"
+    sql = """SELECT urls.id, urls.name, url_checks.created_at
+    FROM urls left join url_checks
+    on urls.id = url_checks.url_id
+    ORDER BY id DESC;"""
     with psycopg2.connect(DATABASE_URL) as conn:
         cursor = conn.cursor()
         cursor.execute(sql)
@@ -33,6 +36,7 @@ def get_all_urls():
                 {
                     'id': record[0],
                     'name': record[1],
+                    'created_at': record[2]
                 }
             )
     return urls
@@ -85,7 +89,6 @@ def add_url():
             url_name=url_name
         ), 422
 
-    # add_new_url(url_name)
     url_id = get_id_by_name(url_name)
 
     if not url_id:
@@ -94,6 +97,25 @@ def add_url():
         url_id = get_id_by_name(url_name)
     else:
         flash('Страница уже существует', 'info')
+
+    return redirect(url_for('one_url', url_id=url_id), 302)
+
+
+def sql_check_url(values):
+    sql = '''
+    INSERT INTO url_checks
+    (url_id) VALUES (%s);
+    '''
+    with psycopg2.connect(DATABASE_URL) as conn:
+        cursor = conn.cursor()
+        cursor.execute(sql, (values,))
+        conn.commit()
+
+
+@app.post('/urls/<int:url_id>/checks')
+def check_url(url_id):
+    flash('Страница успешно проверена', 'success')
+    sql_check_url(url_id)
 
     return redirect(url_for('one_url', url_id=url_id), 302)
 
@@ -112,14 +134,40 @@ def get_one_urls(url_id):
     return url_info
 
 
+def get_checks_by_id(url_id):
+    url_checks = []
+    query = '''
+    SELECT
+        url_checks.id,
+        url_checks.created_at
+    FROM url_checks
+    WHERE url_checks.url_id = %s
+    ORDER BY url_checks.id DESC;
+    '''
+    with psycopg2.connect(DATABASE_URL) as conn:
+        cursor = conn.cursor()
+        cursor.execute(query, (url_id,))
+        records = cursor.fetchall()
+    if records:
+        for record in records:
+            url_checks.append(
+                {'id': record[0],
+                 'created_at': record[1]
+                 }
+            )
+    return url_checks
+
+
 @app.route('/urls/<int:url_id>')
 def one_url(url_id):
     url_info = get_one_urls(url_id)
     messages = get_flashed_messages(with_categories=True)
+    url_checks = get_checks_by_id(url_id)
     return render_template(
         'one_url.html',
         messages=messages,
         url=url_info,
+        url_checks=url_checks
     )
 
 

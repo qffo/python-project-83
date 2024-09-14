@@ -1,23 +1,17 @@
 {% extends "index.html" %}
 
-{% block h1 %}Сайты:{% endblock %}
+{% block h1 %}Сайты{% endblock %}
 
 {% block content %}
-<style>
-    .custom-link {
-        color: #f5f5f5;
-    }
-    .custom-link:hover {
-        color: #00aaff; /* Цвет при наведении */
-    }
-    </style>
 
     <div class="table-responsive">
         <table class="table table-bordered table-hover table-dark text-nowrap" data-test="urls"> <!-- добавил table-dark -->
             <thead>
                 <tr>
-                    <th>Id</th>
+                    <th>ID</th>
                     <th>Имя</th>
+                    <th>Последняя проверка</th>
+                    
                 </tr>
             </thead>
             <tbody>
@@ -29,6 +23,11 @@
                             </td>
                             <td>
                                 <a href="{{ url_for('one_url', url_id=url['id']) }}" style="text-decoration: none" class="custom-link">{{ url['name'] }}</a>
+                            </td>
+                            <td>
+                                {% if url['created_at'] %}
+                                    {{ url['created_at'] }}
+                                {% endif %}
                             </td>
                         </tr>
                     {% endfor %}
