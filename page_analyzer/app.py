@@ -22,8 +22,9 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 
 def get_all_urls():
     urls = []
-    sql = """SELECT urls.id, urls.name, url_checks.created_at
-    FROM urls left join url_checks
+    sql = """SELECT distinct on (urls.id)
+    urls.id, urls.name, url_checks.created_at
+    FROM urls right join url_checks
     on urls.id = url_checks.url_id
     ORDER BY id DESC;"""
     with psycopg2.connect(DATABASE_URL) as conn:
@@ -36,7 +37,7 @@ def get_all_urls():
                 {
                     'id': record[0],
                     'name': record[1],
-                    'created_at': record[2]
+                    'created_at': record[2].date()
                 }
             )
     return urls
@@ -130,7 +131,7 @@ def get_one_urls(url_id):
     if record:
         url_info['id'] = record[0]
         url_info['name'] = record[1]
-        url_info['created_at'] = record[2]
+        url_info['created_at'] = record[2].date()
     return url_info
 
 
@@ -152,7 +153,7 @@ def get_checks_by_id(url_id):
         for record in records:
             url_checks.append(
                 {'id': record[0],
-                 'created_at': record[1]
+                 'created_at': record[1].date()
                  }
             )
     return url_checks
