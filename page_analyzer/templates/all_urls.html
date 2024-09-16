@@ -11,7 +11,7 @@
                     <th>ID</th>
                     <th>Имя</th>
                     <th>Последняя проверка</th>
-                    
+                    <th>Код ответа</th>
                 </tr>
             </thead>
             <tbody>
@@ -27,6 +27,11 @@
                             <td>
                                 {% if url['created_at'] %}
                                     {{ url['created_at'] }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if url['status_code'] %}
+                                    {{ url['status_code'] }}
                                 {% endif %}
                             </td>
                         </tr>

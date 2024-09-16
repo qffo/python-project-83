@@ -1,4 +1,5 @@
 import os
+import requests
 from dotenv import load_dotenv
 from flask import (
     Flask,
@@ -20,11 +21,20 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 DATABASE_URL = os.getenv('DATABASE_URL')
 
 
+# проверка для "Последняя проверка"
+# если дата проверки отсутствует то None
+# если дата проверки есть то переводим её в нормальую дату
+def data_format(created_at):
+    if created_at is None:
+        return None
+    return created_at.date()
+
+
 def get_all_urls():
     urls = []
     sql = """SELECT distinct on (urls.id)
-    urls.id, urls.name, url_checks.created_at
-    FROM urls right join url_checks
+    urls.id, urls.name, url_checks.created_at, url_checks.status_code
+    FROM urls left join url_checks
     on urls.id = url_checks.url_id
     ORDER BY id DESC;"""
     with psycopg2.connect(DATABASE_URL) as conn:
@@ -37,7 +47,8 @@ def get_all_urls():
                 {
                     'id': record[0],
                     'name': record[1],
-                    'created_at': record[2].date()
+                    'created_at': data_format(record[2]),
+                    'status_code': record[3]
                 }
             )
     return urls
@@ -102,25 +113,6 @@ def add_url():
     return redirect(url_for('one_url', url_id=url_id), 302)
 
 
-def sql_check_url(values):
-    sql = '''
-    INSERT INTO url_checks
-    (url_id) VALUES (%s);
-    '''
-    with psycopg2.connect(DATABASE_URL) as conn:
-        cursor = conn.cursor()
-        cursor.execute(sql, (values,))
-        conn.commit()
-
-
-@app.post('/urls/<int:url_id>/checks')
-def check_url(url_id):
-    flash('Страница успешно проверена', 'success')
-    sql_check_url(url_id)
-
-    return redirect(url_for('one_url', url_id=url_id), 302)
-
-
 def get_one_urls(url_id):
     url_info = {}
     sql = 'SELECT * FROM urls WHERE id = %s;'
@@ -131,15 +123,40 @@ def get_one_urls(url_id):
     if record:
         url_info['id'] = record[0]
         url_info['name'] = record[1]
-        url_info['created_at'] = record[2].date()
+        url_info['created_at'] = data_format(record[2])
     return url_info
+
+
+def sql_check_url(url_id, st_code):
+    sql = '''
+    INSERT INTO url_checks
+    (url_id, status_code)
+    VALUES (%s, %s);
+    '''
+    with psycopg2.connect(DATABASE_URL) as conn:
+        cursor = conn.cursor()
+        cursor.execute(sql, (url_id, st_code,))
+        conn.commit()
+
+
+@app.post('/urls/<int:url_id>/checks')
+def check_url(url_id):
+    url_info = get_one_urls(url_id)
+    resp = requests.get(url_info['name'])
+    resp.raise_for_status()
+
+    flash('Страница успешно проверена', 'success')
+    sql_check_url(url_id, resp.status_code)
+
+    return redirect(url_for('one_url', url_id=url_id), 302)
 
 
 def get_checks_by_id(url_id):
     url_checks = []
-    query = '''
+    sql = '''
     SELECT
         url_checks.id,
+        url_checks.status_code,
         url_checks.created_at
     FROM url_checks
     WHERE url_checks.url_id = %s
@@ -147,13 +164,14 @@ def get_checks_by_id(url_id):
     '''
     with psycopg2.connect(DATABASE_URL) as conn:
         cursor = conn.cursor()
-        cursor.execute(query, (url_id,))
+        cursor.execute(sql, (url_id,))
         records = cursor.fetchall()
     if records:
         for record in records:
             url_checks.append(
                 {'id': record[0],
-                 'created_at': record[1].date()
+                 'status_code': record[1],
+                 'created_at': data_format(record[2])
                  }
             )
     return url_checks
