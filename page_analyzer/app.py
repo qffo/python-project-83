@@ -21,7 +21,7 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 DATABASE_URL = os.getenv('DATABASE_URL')
 
 
-# проверка для "Последняя проверка"
+# форматируем дату в нормальную дату
 # если дата проверки отсутствует то None
 # если дата проверки есть то переводим её в нормальую дату
 def data_format(created_at):
@@ -142,13 +142,26 @@ def sql_check_url(url_id, st_code):
 @app.post('/urls/<int:url_id>/checks')
 def check_url(url_id):
     url_info = get_one_urls(url_id)
-    resp = requests.get(url_info['name'])
-    resp.raise_for_status()
 
-    flash('Страница успешно проверена', 'success')
-    sql_check_url(url_id, resp.status_code)
+    # try - обработка возможных исключений, идёт вместе с except
+    # В этом блоке выполняется код, который может вызвать исключение.
+    try:
+        r = requests.get(url_info['name'])
 
-    return redirect(url_for('one_url', url_id=url_id), 302)
+        # Метод resp.raise_for_status() проверяет, был ли запрос успешным
+        # Если код состояния не 200 (например, 404 или 500),
+        # будет вызвано исключение HTTPError
+        r.raise_for_status()
+
+        flash('Страница успешно проверена', 'success')
+        sql_check_url(url_id, r.status_code)
+        return redirect(url_for('one_url', url_id=url_id), 302)
+
+    # except - Этот блок отлавливает все исключения, связанные с запросами,
+    # и выполняет код внутри него, если произошло исключение
+    except requests.exceptions.RequestException:
+        flash('Произошла ошибка при проверке', 'danger')
+        return redirect(url_for('one_url', url_id=url_id))
 
 
 def get_checks_by_id(url_id):
