@@ -11,6 +11,8 @@ from flask import (
     get_flashed_messages
 )
 from .validator import validate
+# from bs4 import BeautifulSoup
+from .parser_bs4 import get_h1, get_title, get_descr
 
 import psycopg2
 
@@ -127,15 +129,15 @@ def get_one_urls(url_id):
     return url_info
 
 
-def sql_check_url(url_id, st_code):
+def sql_check_url(url_id, st_code, bs4_h1, bs4_title, bs4_descr):
     sql = '''
     INSERT INTO url_checks
-    (url_id, status_code)
-    VALUES (%s, %s);
+    (url_id, status_code, h1, title, description)
+    VALUES (%s, %s, %s, %s, %s);
     '''
     with psycopg2.connect(DATABASE_URL) as conn:
         cursor = conn.cursor()
-        cursor.execute(sql, (url_id, st_code,))
+        cursor.execute(sql, (url_id, st_code, bs4_h1, bs4_title, bs4_descr))
         conn.commit()
 
 
@@ -152,9 +154,12 @@ def check_url(url_id):
         # Если код состояния не 200 (например, 404 или 500),
         # будет вызвано исключение HTTPError
         r.raise_for_status()
+        bs4_h1 = get_h1(url_info['name'])
+        bs4_title = get_title(url_info['name'])
+        bs4_descr = get_descr(url_info['name'])
 
         flash('Страница успешно проверена', 'success')
-        sql_check_url(url_id, r.status_code)
+        sql_check_url(url_id, r.status_code, bs4_h1, bs4_title, bs4_descr)
         return redirect(url_for('one_url', url_id=url_id), 302)
 
     # except - Этот блок отлавливает все исключения, связанные с запросами,
@@ -170,7 +175,10 @@ def get_checks_by_id(url_id):
     SELECT
         url_checks.id,
         url_checks.status_code,
-        url_checks.created_at
+        url_checks.created_at,
+        url_checks.h1,
+        url_checks.title,
+        url_checks.description
     FROM url_checks
     WHERE url_checks.url_id = %s
     ORDER BY url_checks.id DESC;
@@ -184,7 +192,10 @@ def get_checks_by_id(url_id):
             url_checks.append(
                 {'id': record[0],
                  'status_code': record[1],
-                 'created_at': data_format(record[2])
+                 'created_at': data_format(record[2]),
+                 'h1': record[3],
+                 'title': record[4],
+                 'description': record[5]
                  }
             )
     return url_checks
