@@ -10,23 +10,23 @@ Page Analyzer – это сайт, который анализирует ука�
 
 https://python-project-83-7rqr.onrender.com
 
-![пример GIF](/static/images/sample.gif)
+![пример GIF](page_analyzer/static/images/sample.gif)
 
-## Minimum requirements for starting a project:
-- Python version 3.10.15 or higher
-- Pip version 24.2 or higher
+## Минимальные требования для запуска проекта:
+- Python version 3.10.15
+- Pip version 24.2
 - Poetry version 1.8.3
 
-This project was built using these tools:
+Этот проект был создан с использованием этих инструментов:
 
-| Tool                                                          | Description                                             |
-|---------------------------------------------------------------|---------------------------------------------------------|
-| [poetry](https://python-poetry.org/)                          | "Python dependency management and packaging made easy"  |
-| [flask](https://flask.palletsprojects.com/en/3.0.x/)          | "A set of tools for creating web applications"          |
-| [gunicorn](https://gunicorn.org/)                             | "Python WSGI HTTP Server for UNIX"                      |
-| [beautifulsoup4](https://www.crummy.com/software/BeautifulSoup/bs4/doc.ru/bs4ru.html/) | "library for parsing HTML and XML documents" |
+| Инструмент                                                    | Описание                                                  |
+|---------------------------------------------------------------|-----------------------------------------------------------|
+| [poetry](https://python-poetry.org/)                          | "Упрощенное управление зависимостями Python и их упаковка" |
+| [flask](https://flask.palletsprojects.com/en/3.0.x/)          | "Легковесный фреймворк для создания веб-приложений"       |
+| [gunicorn](https://gunicorn.org/)                             | "HTTP-сервер Python WSGI для UNIX"                      |
+| [beautifulsoup4](https://www.crummy.com/software/BeautifulSoup/bs4/doc.ru/bs4ru.html/) | "библиотека для парсинга HTML и XML документов" |
 |  |  |
-| [flake8](https://flake8.pycqa.org/)                           | "Your tool for style guide enforcement"                 |
+| [flake8](https://flake8.pycqa.org/)                           | "Линтер"                 |
 ---
 
 #### Клонирование репозитария
