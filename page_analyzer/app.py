@@ -11,6 +11,7 @@ from flask import (
     get_flashed_messages
 )
 from .validator import validate
+from .normalize_ur import normalize_url
 # from bs4 import BeautifulSoup
 from .parser_bs4 import get_h1, get_title, get_descr
 
@@ -108,7 +109,7 @@ def add_url():
             url_name=url_name
         ), 422
 
-    url_id = get_id_by_name(url_name)
+    url_id = get_id_by_name(normalize_url(url_name))
 
     if not url_id:
         flash('Страница успешно добавлена', 'success')
