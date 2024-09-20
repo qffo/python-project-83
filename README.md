@@ -8,7 +8,7 @@
 
 Page Analyzer – это сайт, который анализирует указанные страницы на SEO-пригодность.
 
-Pадеплоенное приложение -> https://python-project-83-7rqr.onrender.com
+Задеплоенное приложение -> https://python-project-83-7rqr.onrender.com
 
 ![пример GIF](page_analyzer/static/images/sample.gif)
 
@@ -21,7 +21,7 @@ Pадеплоенное приложение -> https://python-project-83-7rqr.o
 
 | Инструмент                                                    | Описание                                                  |
 |---------------------------------------------------------------|-----------------------------------------------------------|
-| [poetry](https://python-poetry.org/)                          | "Упрощенное управление зависимостями Python и их упаковка" |
+| [poetry](https://python-poetry.org/)                          | "Управление зависимостями Python"                      |
 | [flask](https://flask.palletsprojects.com/en/3.0.x/)          | "Легковесный фреймворк для создания веб-приложений"       |
 | [gunicorn](https://gunicorn.org/)                             | "HTTP-сервер Python WSGI для UNIX"                      |
 | [beautifulsoup4](https://www.crummy.com/software/BeautifulSoup/bs4/doc.ru/bs4ru.html/) | "библиотека для парсинга HTML и XML документов" |
