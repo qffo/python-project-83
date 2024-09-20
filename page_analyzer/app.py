@@ -66,8 +66,13 @@ def all_urls():
 
 
 @app.route('/')
-def hello_world():
+def index():
     return render_template('index.html')
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 
 def add_new_url(url_name):
@@ -145,6 +150,9 @@ def sql_check_url(url_id, st_code, bs4_h1, bs4_title, bs4_descr):
 def check_url(url_id):
     url_info = get_one_urls(url_id)
 
+    if not url_info:
+        return render_template('404.html'), 404
+
     # try - обработка возможных исключений, идёт вместе с except
     # В этом блоке выполняется код, который может вызвать исключение.
     try:
@@ -204,6 +212,8 @@ def get_checks_by_id(url_id):
 @app.route('/urls/<int:url_id>')
 def one_url(url_id):
     url_info = get_one_urls(url_id)
+    if not url_info:
+        return render_template('404.html'), 404
     messages = get_flashed_messages(with_categories=True)
     url_checks = get_checks_by_id(url_id)
     return render_template(
