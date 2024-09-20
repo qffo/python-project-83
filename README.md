@@ -8,7 +8,7 @@
 
 Page Analyzer – это сайт, который анализирует указанные страницы на SEO-пригодность.
 
-https://python-project-83-7rqr.onrender.com
+Pадеплоенное приложение -> https://python-project-83-7rqr.onrender.com
 
 ![пример GIF](page_analyzer/static/images/sample.gif)
 
