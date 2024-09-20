@@ -12,7 +12,6 @@ from flask import (
 )
 from .validator import validate
 from .normalize_ur import normalize_url
-# from bs4 import BeautifulSoup
 from .parser_bs4 import get_h1, get_title, get_descr
 
 import psycopg2
@@ -24,10 +23,10 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 DATABASE_URL = os.getenv('DATABASE_URL')
 
 
-# форматируем дату в нормальную дату
-# если дата проверки отсутствует то None
-# если дата проверки есть то переводим её в нормальую дату
 def data_format(created_at):
+    '''форматируем дату в нормальную дату
+    если дата проверки отсутствует то None
+    если дата проверки есть то переводим её в нормальую дату'''
     if created_at is None:
         return None
     return created_at.date()
