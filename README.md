@@ -24,7 +24,7 @@ Page Analyzer – это сайт, который анализирует ука�
 | [poetry](https://python-poetry.org/)                          | "Управление зависимостями Python"                      |
 | [flask](https://flask.palletsprojects.com/en/3.0.x/)          | "Легковесный фреймворк для создания веб-приложений"       |
 | [gunicorn](https://gunicorn.org/)                             | "HTTP-сервер Python WSGI для UNIX"                      |
-| [beautifulsoup4](https://www.crummy.com/software/BeautifulSoup/bs4/doc.ru/bs4ru.html/) | "библиотека для парсинга HTML и XML документов" |
+| [beautifulsoup4](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) | "библиотека для парсинга HTML и XML документов" |
 |  |  |
 | [flake8](https://flake8.pycqa.org/)                           | "Линтер"                 |
 ---
