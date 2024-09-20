@@ -99,6 +99,7 @@ def get_id_by_name(url_name):
 @app.post('/urls')
 def add_url():
     url_name = request.form.get('url', '', type=str)
+    url_name = normalize_url(url_name)
     if not validate(url_name):
         flash('Некорректный URL', 'danger')
         messages = get_flashed_messages(with_categories=True)
