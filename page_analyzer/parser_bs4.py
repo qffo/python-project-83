@@ -2,9 +2,9 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def get_h1(urlurl):
+def get_h1(url):
     # Получение HTML-кода страницы
-    response = requests.get(urlurl)
+    response = requests.get(url)
 
     # Проверка успешности запроса
     if response.status_code == 200:
@@ -23,8 +23,8 @@ def get_h1(urlurl):
         return f'Ошибка при получении страницы: {response.status_code}'
 
 
-def get_title(urlurl):
-    response = requests.get(urlurl)
+def get_title(url):
+    response = requests.get(url)
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
         title_tag = soup.find('title')
@@ -36,8 +36,8 @@ def get_title(urlurl):
         return f'Ошибка при получении страницы: {response.status_code}'
 
 
-def get_descr(urlurl):
-    response = requests.get(urlurl)
+def get_descr(url):
+    response = requests.get(url)
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
         descr_tag = soup.find('meta', attrs={'name': 'description'})
