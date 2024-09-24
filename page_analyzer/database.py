@@ -1,8 +1,6 @@
 import psycopg2
 from .config import DATABASE_URL  # type: ignore
 
-from .utils import normilize_date
-
 
 def get_all_urls():
     urls = []
@@ -21,7 +19,9 @@ def get_all_urls():
                 {
                     'id': record[0],
                     'name': record[1],
-                    'created_at': normilize_date(record[2]),
+                    'created_at': (
+                        record[2].date() if record[2] is not None else None
+                    ),
                     'status_code': record[3]
                 }
             )
@@ -59,7 +59,9 @@ def get_one_urls(url_id):
     if record:
         url_info['id'] = record[0]
         url_info['name'] = record[1]
-        url_info['created_at'] = normilize_date(record[2])
+        url_info['created_at'] = (
+            record[2].date() if record[2] is not None else None
+        )
     return url_info
 
 
@@ -96,12 +98,15 @@ def get_checks_by_id(url_id):
     if records:
         for record in records:
             url_checks.append(
-                {'id': record[0],
-                 'status_code': record[1],
-                 'created_at': normilize_date(record[2]),
-                 'h1': record[3],
-                 'title': record[4],
-                 'description': record[5]
-                 }
+                {
+                    'id': record[0],
+                    'status_code': record[1],
+                    'created_at': (
+                        record[2].date() if record[2] is not None else None
+                    ),
+                    'h1': record[3],
+                    'title': record[4],
+                    'description': record[5]
+                }
             )
     return url_checks
