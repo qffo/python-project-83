@@ -74,26 +74,37 @@ def add_url():
     return redirect(url_for('one_url', url_id=url_id), 302)
 
 
-@app.post('/urls/<int:url_id>/checks')
-def check_url(url_id):
+def perform_url_check(url_id):
     url_info = get_one_urls(url_id)
 
     if not url_info:
-        return render_template('404.html'), 404
+        return None, 404, 'URL не найден'
+
     try:
         r = requests.get(url_info['name'])
         r.raise_for_status()
+
         bs4_h1 = get_h1(url_info['name'])
         bs4_title = get_title(url_info['name'])
         bs4_descr = get_descr(url_info['name'])
 
-        flash('Страница успешно проверена', 'success')
         sql_check_url(url_id, r.status_code, bs4_h1, bs4_title, bs4_descr)
-        return redirect(url_for('one_url', url_id=url_id), 302)
+
+        return 'Страница успешно проверена', 200, 'success'
 
     except requests.exceptions.RequestException:
-        flash('Произошла ошибка при проверке', 'danger')
-        return redirect(url_for('one_url', url_id=url_id))
+        return 'Произошла ошибка при проверке', 500, 'danger'
+
+
+@app.post('/urls/<int:url_id>/checks')
+def check_url(url_id):
+    message, status_code, category = perform_url_check(url_id)
+
+    if status_code == 404:
+        return render_template('404.html'), 404
+
+    flash(message, category)
+    return redirect(url_for('one_url', url_id=url_id), 302)
 
 
 @app.route('/urls/<int:url_id>')
