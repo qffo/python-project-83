@@ -83,17 +83,30 @@ def perform_url_check(url_id):
     try:
         r = requests.get(url_info['name'])
         r.raise_for_status()
-
-        bs4_h1 = get_h1(url_info['name'])
-        bs4_title = get_title(url_info['name'])
-        bs4_descr = get_descr(url_info['name'])
-
-        sql_check_url(url_id, r.status_code, bs4_h1, bs4_title, bs4_descr)
-
-        return 'Страница успешно проверена', 200, 'success'
-
     except requests.exceptions.RequestException:
-        return 'Произошла ошибка при проверке', 500, 'danger'
+        return 'Произошла ошибка при проверке URL', 500, 'danger'
+
+    try:
+        bs4_h1 = get_h1(url_info['name'])
+    except Exception:
+        return 'Произошла ошибка при извлечении h1', 500, 'danger'
+
+    try:
+        bs4_title = get_title(url_info['name'])
+    except Exception:
+        return 'Произошла ошибка при извлечении title', 500, 'danger'
+
+    try:
+        bs4_descr = get_descr(url_info['name'])
+    except Exception:
+        return 'Произошла ошибка при извлечении описания', 500, 'danger'
+
+    try:
+        sql_check_url(url_id, r.status_code, bs4_h1, bs4_title, bs4_descr)
+    except Exception:
+        return 'Ошибка при сохранении данных в базу', 500, 'danger'
+
+    return 'Страница успешно проверена', 200, 'success'
 
 
 @app.post('/urls/<int:url_id>/checks')
