@@ -74,7 +74,7 @@ def add_url():
     return redirect(url_for('one_url', url_id=url_id), 302)
 
 
-def perform_url_check(url_id):
+def perform_url_check(url_id):  # noqa: C901
     url_info = get_one_urls(url_id)
 
     if not url_info:
