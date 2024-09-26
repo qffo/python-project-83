@@ -80,9 +80,7 @@ def get_one_urls(url_id):
         if record:
             url_info['id'] = record[0]
             url_info['name'] = record[1]
-            url_info['created_at'] = (
-                record[2].date() if record[2] is not None else None
-            )
+            url_info['created_at'] = record[2].date()
     finally:
         connection_pool.putconn(conn)
     return url_info
@@ -130,9 +128,7 @@ def get_checks_by_id(url_id):
                     {
                         'id': record[0],
                         'status_code': record[1],
-                        'created_at': (
-                            record[2].date() if record[2] is not None else None
-                        ),
+                        'created_at': record[2].date(),
                         'h1': record[3],
                         'title': record[4],
                         'description': record[5]
