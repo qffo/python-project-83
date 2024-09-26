@@ -75,6 +75,9 @@ def add_url():
 
 
 def perform_url_check(url_id):  # noqa: C901
+    """
+    Check the status of a URL and save the results to the database.
+    """
     url_info = get_one_urls(url_id)
 
     if not url_info:
