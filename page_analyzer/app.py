@@ -81,28 +81,21 @@ def perform_url_check(url_id):  # noqa: C901
         return None, 404, 'URL не найден'
 
     try:
-        r = requests.get(url_info['name'])
-        r.raise_for_status()
+        response = requests.get(url_info['name'])
+        response.raise_for_status()
     except requests.exceptions.RequestException:
         return 'Произошла ошибка при проверке URL', 500, 'danger'
 
     try:
-        bs4_h1 = get_h1(url_info['name'])
+        bs4_h1 = get_h1(response)
+        bs4_title = get_title(response)
+        bs4_descr = get_descr(response)
     except Exception:
-        return 'Произошла ошибка при извлечении h1', 500, 'danger'
+        return 'Ошибка при извлечении данных', 500, 'danger'
 
     try:
-        bs4_title = get_title(url_info['name'])
-    except Exception:
-        return 'Произошла ошибка при извлечении title', 500, 'danger'
-
-    try:
-        bs4_descr = get_descr(url_info['name'])
-    except Exception:
-        return 'Произошла ошибка при извлечении описания', 500, 'danger'
-
-    try:
-        sql_check_url(url_id, r.status_code, bs4_h1, bs4_title, bs4_descr)
+        sql_check_url(url_id, response.status_code,
+                      bs4_h1, bs4_title, bs4_descr)
     except Exception:
         return 'Ошибка при сохранении данных в базу', 500, 'danger'
 
