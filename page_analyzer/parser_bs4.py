@@ -2,7 +2,6 @@ from bs4 import BeautifulSoup
 
 
 def get_h1(response: str) -> str:
-    print('titi', response)
     soup = BeautifulSoup(response.text, 'html.parser')
     h1_tag = soup.find('h1')
     return h1_tag.text if h1_tag else None
@@ -20,5 +19,4 @@ def get_descr(response: str) -> str:
     if descr_tag and 'content' in descr_tag.attrs:
         content_value = descr_tag['content']
         return content_value
-    else:
-        return None
+    return None
