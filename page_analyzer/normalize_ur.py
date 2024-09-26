@@ -1,7 +1,7 @@
 from urllib.parse import urlparse, urlunparse
 
 
-def normalize_url(url):
+def normalize_url(url: str) -> str:
     '''Returns a normalized URL, preserving only the scheme and host.
     Example:
         normalize_url("https://www.example.com/some/path?query=param#fragment")
