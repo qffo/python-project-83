@@ -11,7 +11,7 @@ from flask import (
     get_flashed_messages
 )
 from .validator import validate
-from .normalize_ur import normalize_url
+from .normalize_url import normalize_url
 from .parser_bs4 import get_h1, get_title, get_descr
 
 from .database import (

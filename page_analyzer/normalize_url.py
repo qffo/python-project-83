@@ -1,4 +1,4 @@
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urlparse
 
 
 def normalize_url(url: str) -> str:
