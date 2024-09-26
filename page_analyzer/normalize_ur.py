@@ -9,4 +9,4 @@ def normalize_url(url: str) -> str:
         will return "https://www.example.com".
     '''
     parsed_url = urlparse(url)
-    return urlunparse((parsed_url.scheme, parsed_url.hostname, '', '', '', ''))
+    return "://".join([f"{parsed_url.scheme}", parsed_url.hostname])
