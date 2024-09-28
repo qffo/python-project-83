@@ -1,4 +1,5 @@
 import validators
+import logging
 import psycopg2
 import requests
 from .parser_bs4 import get_h1, get_title, get_descr
@@ -6,6 +7,9 @@ from .database import (
     get_one_urls,
     sql_check_url,
 )
+
+logging.basicConfig(level=logging.ERROR)
+logger = logging.getLogger(__name__)
 
 
 def validate(url: str) -> bool:
@@ -22,30 +26,16 @@ def perform_url_check(url_id):  # noqa: C901
     url_info = get_one_urls(url_id)
 
     if not url_info:
-        return None, 404, 'URL не найден'
+        return None, 404
 
     try:
         response = requests.get(url_info['name'])
         response.raise_for_status()
-    except requests.exceptions.HTTPError:
-        return 'Ошибка HTTP при проверке URL', 500, 'danger'
-    except requests.exceptions.ConnectionError:
-        return 'Ошибка соединения при проверке URL', 500, 'danger'
-    except requests.exceptions.Timeout:
-        return 'Тайм-аут при проверке URL', 500, 'danger'
-    except requests.exceptions.RequestException:
-        return 'Произошла ошибка при проверке URL', 500, 'danger'
-
-    try:
         bs4_h1 = get_h1(response)
         bs4_title = get_title(response)
         bs4_descr = get_descr(response)
-    except AttributeError:
-        return 'Ошибка парсинга: не удалось найти  элемент', 500, 'danger'
-    except ValueError:
-        return 'Ошибка парсинга: неверный формат данных', 500, 'danger'
-    except Exception as e:
-        return f'Ошибка при извлечении данных: {str(e)}', 500, 'danger'
+    except Exception:
+        return f'Произошла ошибка при проверке', 500, 'danger'
 
     try:
         sql_check_url(url_id, response.status_code,

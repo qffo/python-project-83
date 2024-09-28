@@ -10,7 +10,7 @@ from flask import (
     flash,
     get_flashed_messages
 )
-from .unit import validate, perform_url_check
+from .utils import validate, perform_url_check
 from .normalize_url import normalize_url
 
 
