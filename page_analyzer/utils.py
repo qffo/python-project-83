@@ -35,7 +35,7 @@ def perform_url_check(url_id):  # noqa: C901
         bs4_title = get_title(response)
         bs4_descr = get_descr(response)
     except Exception:
-        return f'Произошла ошибка при проверке', 500, 'danger'
+        return 'Произошла ошибка при проверке', 500, 'danger'
 
     try:
         sql_check_url(url_id, response.status_code,
