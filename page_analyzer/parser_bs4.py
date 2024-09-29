@@ -21,7 +21,8 @@ def get_title(response: str) -> str:
 
 def get_descr(response: str) -> str:
     """
-    Extract the content of the <meta name="description"> tag from the given HTML response.
+    Extract the content of the <meta name="description"> tag
+    from the given HTML response.
     """
     soup = BeautifulSoup(response.text, 'html.parser')
     descr_tag = soup.find('meta', attrs={'name': 'description'})
