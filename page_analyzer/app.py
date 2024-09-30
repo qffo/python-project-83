@@ -17,7 +17,7 @@ from .database import (
     get_all_urls,
     add_new_url,
     get_id_by_name,
-    get_one_urls,
+    get_one_url,
     get_checks_by_id
 )
 
@@ -85,7 +85,7 @@ def check_url(url_id):
 
 @app.route('/urls/<int:url_id>')
 def one_url(url_id):
-    url_info = get_one_urls(url_id)
+    url_info = get_one_url(url_id)
     if not url_info:
         return render_template('404.html'), 404
     messages = get_flashed_messages(with_categories=True)

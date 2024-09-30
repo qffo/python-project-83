@@ -3,7 +3,7 @@ import logging
 import requests
 from .parser_bs4 import get_h1, get_title, get_descr
 from .database import (
-    get_one_urls,
+    get_one_url,
     sql_check_url,
 )
 
@@ -22,7 +22,7 @@ def perform_url_check(url_id):
     """
     Check the status of a URL and save the results to the database.
     """
-    url_info = get_one_urls(url_id)
+    url_info = get_one_url(url_id)
 
     if not url_info:
         return None, 404

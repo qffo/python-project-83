@@ -31,8 +31,7 @@ def get_all_urls(conn=None):
                     }
                 )
     finally:
-        if not conn:
-            connection_pool.putconn(conn)
+        connection_pool.putconn(conn)
     return urls
 
 
@@ -46,8 +45,7 @@ def add_new_url(url_name, conn=None):
             cursor.execute(sql, (url_name,))
             conn.commit()
     finally:
-        if not conn:
-            connection_pool.putconn(conn)
+        connection_pool.putconn(conn)
 
 
 def get_id_by_name(url_name, conn=None):
@@ -64,8 +62,7 @@ def get_id_by_name(url_name, conn=None):
             record = cursor.fetchone()
         url_id = record[0] if record else None
     finally:
-        if not conn:
-            connection_pool.putconn(conn)
+        connection_pool.putconn(conn)
     return url_id
 
 
@@ -84,8 +81,7 @@ def get_one_url(url_id, conn=None):
             url_info['name'] = record[1]
             url_info['created_at'] = record[2].date()
     finally:
-        if not conn:
-            connection_pool.putconn(conn)
+        connection_pool.putconn(conn)
     return url_info
 
 
@@ -102,8 +98,7 @@ def sql_check_url(url_id, st_code, bs4_h1, bs4_title, bs4_descr, conn=None):
             cursor.execute(sql, (url_id, st_code, bs4_h1, bs4_title, bs4_descr))
             conn.commit()
     finally:
-        if not conn:
-            connection_pool.putconn(conn)
+        connection_pool.putconn(conn)
 
 
 def get_checks_by_id(url_id, conn=None):
@@ -139,6 +134,5 @@ def get_checks_by_id(url_id, conn=None):
                     }
                 )
     finally:
-        if not conn:
-            connection_pool.putconn(conn)
+        connection_pool.putconn(conn)
     return url_checks
