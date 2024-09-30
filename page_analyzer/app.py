@@ -1,4 +1,3 @@
-
 from dotenv import load_dotenv
 from .config import SECRET_KEY  # type: ignore
 from flask import (

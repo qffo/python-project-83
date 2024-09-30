@@ -1,11 +1,10 @@
 from psycopg2 import pool
 from .config import DATABASE_URL  # type: ignore
 
-
 connection_pool = pool.SimpleConnectionPool(1, 10, DATABASE_URL)
 
 
-def get_all_urls():
+def get_all_urls(conn=None):
     urls = []
     sql = """SELECT distinct on (urls.id)
     urls.id, urls.name, url_checks.created_at, url_checks.status_code
@@ -13,7 +12,7 @@ def get_all_urls():
     on urls.id = url_checks.url_id
     ORDER BY id DESC;"""
 
-    conn = connection_pool.getconn()
+    conn = conn or connection_pool.getconn()
     try:
         with conn:
             cursor = conn.cursor()
@@ -32,30 +31,32 @@ def get_all_urls():
                     }
                 )
     finally:
-        connection_pool.putconn(conn)
+        if not conn:
+            connection_pool.putconn(conn)
     return urls
 
 
-def add_new_url(url_name):
+def add_new_url(url_name, conn=None):
     sql = 'INSERT INTO urls (name) VALUES (%s);'
 
-    conn = connection_pool.getconn()
+    conn = conn or connection_pool.getconn()
     try:
         with conn:
             cursor = conn.cursor()
             cursor.execute(sql, (url_name,))
             conn.commit()
     finally:
-        connection_pool.putconn(conn)
+        if not conn:
+            connection_pool.putconn(conn)
 
 
-def get_id_by_name(url_name):
+def get_id_by_name(url_name, conn=None):
     sql = '''
     SELECT id FROM urls
     WHERE name = %s;
     '''
 
-    conn = connection_pool.getconn()
+    conn = conn or connection_pool.getconn()
     try:
         with conn:
             cursor = conn.cursor()
@@ -63,15 +64,16 @@ def get_id_by_name(url_name):
             record = cursor.fetchone()
         url_id = record[0] if record else None
     finally:
-        connection_pool.putconn(conn)
+        if not conn:
+            connection_pool.putconn(conn)
     return url_id
 
 
-def get_one_urls(url_id):
+def get_one_url(url_id, conn=None):
     url_info = {}
     sql = 'SELECT * FROM urls WHERE id = %s;'
 
-    conn = connection_pool.getconn()
+    conn = conn or connection_pool.getconn()
     try:
         with conn:
             cursor = conn.cursor()
@@ -82,27 +84,29 @@ def get_one_urls(url_id):
             url_info['name'] = record[1]
             url_info['created_at'] = record[2].date()
     finally:
-        connection_pool.putconn(conn)
+        if not conn:
+            connection_pool.putconn(conn)
     return url_info
 
 
-def sql_check_url(url_id, st_code, bs4_h1, bs4_title, bs4_descr):
+def sql_check_url(url_id, st_code, bs4_h1, bs4_title, bs4_descr, conn=None):
     sql = '''
     INSERT INTO url_checks
     (url_id, status_code, h1, title, description)
     VALUES (%s, %s, %s, %s, %s);
     '''
-    conn = connection_pool.getconn()
+    conn = conn or connection_pool.getconn()
     try:
         with conn:
             cursor = conn.cursor()
             cursor.execute(sql, (url_id, st_code, bs4_h1, bs4_title, bs4_descr))
             conn.commit()
     finally:
-        connection_pool.putconn(conn)
+        if not conn:
+            connection_pool.putconn(conn)
 
 
-def get_checks_by_id(url_id):
+def get_checks_by_id(url_id, conn=None):
     url_checks = []
     sql = '''
     SELECT
@@ -116,7 +120,7 @@ def get_checks_by_id(url_id):
     WHERE url_checks.url_id = %s
     ORDER BY url_checks.id DESC;
     '''
-    conn = connection_pool.getconn()
+    conn = conn or connection_pool.getconn()
     try:
         with conn:
             cursor = conn.cursor()
@@ -135,5 +139,6 @@ def get_checks_by_id(url_id):
                     }
                 )
     finally:
-        connection_pool.putconn(conn)
+        if not conn:
+            connection_pool.putconn(conn)
     return url_checks
