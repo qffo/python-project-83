@@ -9,11 +9,12 @@ from .database import (
     sql_check_url,
 )
 
+
 logging.basicConfig(
     level=logging.ERROR,
     filename="log.log",
     format="%(asctime)s %(levelname)s %(message)s",
-    # filemode='w'
+    filemode='w'
 )
 
 logger = logging.getLogger(__name__)
@@ -62,10 +63,10 @@ def fetch_url(url):
     default_error_msg = 'Произошла ошибка при проверке'
 
     class ErrorMessage(str, Enum):
-        httperror = 'Ошибка HTTP при проверке URL'
-        connecterror = 'Ошибка соединения при проверке URL'
-        timeout = 'Тайм-аут при проверке URL'
-        requestsexc = 'Исключение из запроса при проверке URL'
+        httperror = 'HTTP error when checking the URL'
+        connecterror = 'Connection error when checking the URL'
+        timeout = 'Timeout when checking the URL'
+        requestsexc = 'Exclusion from the request when checking the URL'
 
     try:
         response = requests.get(url)
@@ -77,7 +78,7 @@ def fetch_url(url):
         return None, (default_error_msg, 500, 'danger')
 
     except requests.exceptions.ConnectionError:
-        logger.error(ErrorMessage.connecterror, extra=response)
+        logger.error(ErrorMessage.connecterror, exc_info=True)
         return None, (default_error_msg, 500, 'danger')
 
     except requests.exceptions.Timeout:
@@ -85,7 +86,7 @@ def fetch_url(url):
         return None, (default_error_msg, 500, 'danger')
 
     except requests.exceptions.RequestException:
-        logger.error(ErrorMessage.requestsexc, extra=response)
+        logger.error(ErrorMessage.requestsexc, exc_info=True)
         return None, (default_error_msg, 500, 'danger')
 
 
@@ -101,11 +102,11 @@ def parse_response(response, url):
 
     except (AttributeError, ValueError) as e:
         logger.error(
-            f"{type(e).__name__} при разборе URL-адреса {url}", exc_info=True)
+            f"{type(e).__name__} when parsing the URL {url}", exc_info=True)
 
     except Exception as e:
         logger.error(
-            f"Ошибка при анализе URL-адреса {url}: {str(e)}",
+            f"Error in URL analysis {url}: {str(e)}",
             exc_info=True)
 
     return None, None, None
@@ -119,10 +120,10 @@ def save_to_database(url_id, status_code, h1, title, descr):
         sql_check_url(url_id, status_code, h1, title, descr)
     except psycopg2.DatabaseError:
         logger.error(
-            f"Ошибка БД при сохранении URL-адреса с id {url_id}",
+            f"DB error when saving URL with id {url_id}",
             exc_info=True)
     except Exception as e:
         logger.error(
-            f"Ошибка при сохранении URL-адреса с id {url_id}: {str(e)}",
+            f"Error saving URL with id {url_id}: {str(e)}",
             exc_info=True
         )
