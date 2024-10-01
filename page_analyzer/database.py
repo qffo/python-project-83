@@ -96,7 +96,7 @@ def sql_check_url(url_id, st_code, bs4_h1, bs4_title, bs4_descr):
             conn.commit()
 
 
-def get_checks_by_id(url_id, conn=None):
+def get_checks_by_id(url_id):
     url_checks = []
     sql = '''
     SELECT
