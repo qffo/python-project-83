@@ -23,22 +23,21 @@ def get_all_urls():
     ORDER BY id DESC;"""
 
     with get_connection() as conn:
-        with conn:
-            cursor = conn.cursor()
-            cursor.execute(sql)
-            records = cursor.fetchall()
-        if records:
-            for record in records:
-                urls.append(
-                    {
-                        'id': record[0],
-                        'name': record[1],
-                        'created_at': (
-                            record[2].date() if record[2] is not None else None
-                        ),
-                        'status_code': record[3]
-                    }
-                )
+        cursor = conn.cursor()
+        cursor.execute(sql)
+        records = cursor.fetchall()
+    if records:
+        for record in records:
+            urls.append(
+                {
+                    'id': record[0],
+                    'name': record[1],
+                    'created_at': (
+                        record[2].date() if record[2] is not None else None
+                    ),
+                    'status_code': record[3]
+                }
+            )
     return urls
 
 
@@ -46,10 +45,9 @@ def add_new_url(url_name):
     sql = 'INSERT INTO urls (name) VALUES (%s);'
 
     with get_connection() as conn:
-        with conn:
-            cursor = conn.cursor()
-            cursor.execute(sql, (url_name,))
-            conn.commit()
+        cursor = conn.cursor()
+        cursor.execute(sql, (url_name,))
+        conn.commit()
 
 
 def get_id_by_name(url_name):
@@ -59,11 +57,10 @@ def get_id_by_name(url_name):
     '''
 
     with get_connection() as conn:
-        with conn:
-            cursor = conn.cursor()
-            cursor.execute(sql, (url_name,))
-            record = cursor.fetchone()
-        url_id = record[0] if record else None
+        cursor = conn.cursor()
+        cursor.execute(sql, (url_name,))
+        record = cursor.fetchone()
+    url_id = record[0] if record else None
     return url_id
 
 
@@ -72,14 +69,13 @@ def get_one_url(url_id):
     sql = 'SELECT * FROM urls WHERE id = %s;'
 
     with get_connection() as conn:
-        with conn:
-            cursor = conn.cursor()
-            cursor.execute(sql, (url_id,))
-            record = cursor.fetchone()
-        if record:
-            url_info['id'] = record[0]
-            url_info['name'] = record[1]
-            url_info['created_at'] = record[2].date()
+        cursor = conn.cursor()
+        cursor.execute(sql, (url_id,))
+        record = cursor.fetchone()
+    if record:
+        url_info['id'] = record[0]
+        url_info['name'] = record[1]
+        url_info['created_at'] = record[2].date()
     return url_info
 
 
@@ -90,10 +86,9 @@ def sql_check_url(url_id, st_code, bs4_h1, bs4_title, bs4_descr):
     VALUES (%s, %s, %s, %s, %s);
     '''
     with get_connection() as conn:
-        with conn:
-            cursor = conn.cursor()
-            cursor.execute(sql, (url_id, st_code, bs4_h1, bs4_title, bs4_descr))
-            conn.commit()
+        cursor = conn.cursor()
+        cursor.execute(sql, (url_id, st_code, bs4_h1, bs4_title, bs4_descr))
+        conn.commit()
 
 
 def get_checks_by_id(url_id):
