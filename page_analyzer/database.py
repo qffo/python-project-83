@@ -16,7 +16,7 @@ def get_connection():
 
 def get_all_urls():
     urls = []
-    sql = """SELECT distinct on (urls.id)
+    query = """SELECT distinct on (urls.id)
     urls.id, urls.name, url_checks.created_at, url_checks.status_code
     FROM urls left join url_checks
     on urls.id = url_checks.url_id
@@ -24,7 +24,7 @@ def get_all_urls():
 
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(sql)
+        cursor.execute(query)
         records = cursor.fetchall()
     if records:
         for record in records:
@@ -42,23 +42,23 @@ def get_all_urls():
 
 
 def add_new_url(url_name):
-    sql = 'INSERT INTO urls (name) VALUES (%s);'
+    query = 'INSERT INTO urls (name) VALUES (%s);'
 
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(sql, (url_name,))
+        cursor.execute(query, (url_name,))
         conn.commit()
 
 
 def get_id_by_name(url_name):
-    sql = '''
+    query = '''
     SELECT id FROM urls
     WHERE name = %s;
     '''
 
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(sql, (url_name,))
+        cursor.execute(query, (url_name,))
         record = cursor.fetchone()
     url_id = record[0] if record else None
     return url_id
@@ -66,11 +66,11 @@ def get_id_by_name(url_name):
 
 def get_one_url(url_id):
     url_info = {}
-    sql = 'SELECT * FROM urls WHERE id = %s;'
+    query = 'SELECT * FROM urls WHERE id = %s;'
 
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(sql, (url_id,))
+        cursor.execute(query, (url_id,))
         record = cursor.fetchone()
     if record:
         url_info['id'] = record[0]
@@ -80,20 +80,20 @@ def get_one_url(url_id):
 
 
 def sql_check_url(url_id, st_code, bs4_h1, bs4_title, bs4_descr):
-    sql = '''
+    query = '''
     INSERT INTO url_checks
     (url_id, status_code, h1, title, description)
     VALUES (%s, %s, %s, %s, %s);
     '''
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(sql, (url_id, st_code, bs4_h1, bs4_title, bs4_descr))
+        cursor.execute(query, (url_id, st_code, bs4_h1, bs4_title, bs4_descr))
         conn.commit()
 
 
 def get_checks_by_id(url_id):
     url_checks = []
-    sql = '''
+    query = '''
     SELECT
         url_checks.id,
         url_checks.status_code,
@@ -107,7 +107,7 @@ def get_checks_by_id(url_id):
     '''
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute(sql, (url_id,))
+        cursor.execute(query, (url_id,))
         records = cursor.fetchall()
     if records:
         for record in records:
