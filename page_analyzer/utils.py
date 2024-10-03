@@ -1,8 +1,9 @@
 from enum import Enum
 import psycopg2
 import validators
-import logging
+import logging.config
 import requests
+from page_analyzer.config import LOGGING_CONFIG
 from .parser_bs4 import get_h1, get_title, get_descr
 from .database import (
     get_one_url,
@@ -10,14 +11,8 @@ from .database import (
 )
 
 
-logging.basicConfig(
-    level=logging.ERROR,
-    filename="log.log",
-    format="%(asctime)s %(levelname)s %(message)s",
-    filemode='w'
-)
-
 logger = logging.getLogger(__name__)
+logging.config.dictConfig(LOGGING_CONFIG)
 
 
 def validate(url: str) -> bool:
