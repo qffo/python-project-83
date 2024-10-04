@@ -90,9 +90,9 @@ def parse_response(response, url):
     Parse the response to extract h1, title, and description.
     """
     try:
-        bs4_h1 = get_h1(response)
-        bs4_title = get_title(response)
-        bs4_descr = get_descr(response)
+        bs4_h1 = get_h1(response.text)
+        bs4_title = get_title(response.text)
+        bs4_descr = get_descr(response.text)
         return bs4_h1, bs4_title, bs4_descr
 
     except (AttributeError, ValueError) as e:
