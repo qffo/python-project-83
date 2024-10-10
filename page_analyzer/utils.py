@@ -85,6 +85,13 @@ def fetch_url(url):
         return None, (default_error_msg, 500, 'danger')
 
 
+class ParseError(Exception):
+    """
+    Custom exception for parsing errors.
+    """
+    pass
+
+
 def parse_response(response, url):
     """
     Parse the response to extract h1, title, and description.
@@ -98,13 +105,33 @@ def parse_response(response, url):
     except (AttributeError, ValueError) as e:
         logger.error(
             f"{type(e).__name__} when parsing the URL {url}", exc_info=True)
+        raise ParseError(f"Error parsing the URL {url}: {str(e)}")
 
     except Exception as e:
-        logger.error(
-            f"Error in URL analysis {url}: {str(e)}",
-            exc_info=True)
+        logger.error(f"Error in URL analysis {url}: {str(e)}", exc_info=True)
+        raise ParseError(f"Unexpected error parsing the URL {url}: {str(e)}")
 
-    return None, None, None
+
+# def parse_response(response, url):
+#     """
+#     Parse the response to extract h1, title, and description.
+#     """
+#     try:
+#         bs4_h1 = get_h1(response.text)
+#         bs4_title = get_title(response.text)
+#         bs4_descr = get_descr(response.text)
+#         return bs4_h1, bs4_title, bs4_descr
+
+#     except (AttributeError, ValueError) as e:
+#         logger.error(
+#             f"{type(e).__name__} when parsing the URL {url}", exc_info=True)
+
+#     except Exception as e:
+#         logger.error(
+#             f"Error in URL analysis {url}: {str(e)}",
+#             exc_info=True)
+
+#     return None, None, None
 
 
 def save_to_database(url_id, status_code, h1, title, descr):
