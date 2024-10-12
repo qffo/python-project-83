@@ -9,7 +9,7 @@ from flask import (
     flash,
     get_flashed_messages
 )
-from .utils import validate, perform_url_check
+from .utils import PageCheckError, PageNotFound, validate, perform_url_check
 from .normalize_url import normalize_url
 
 
@@ -74,12 +74,14 @@ def add_url():
 
 @app.post('/urls/<int:url_id>/checks')
 def check_url(url_id):
-    message, status_code, category = perform_url_check(url_id)
-
-    if status_code == 404:
+    try:
+        perform_url_check(url_id)
+    except PageNotFound:
         return render_template('404.html'), 404
-
-    flash(message, category)
+    except PageCheckError:
+        flash('Произошла ошибка при проверке', "danger")
+    else:
+        flash('Страница успешно проверена', "success")
     return redirect(url_for('one_url', url_id=url_id), 302)
 
 
