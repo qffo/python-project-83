@@ -85,7 +85,7 @@ def fetch_url(url: str):
     except requests.exceptions.ConnectionError:
         logger.error(ErrorMessage.connecterror, exc_info=True)
     except requests.exceptions.Timeout:
-        logger.error(ErrorMessage.timeout, extra=response)
+        logger.error(ErrorMessage.timeout, exc_info=True)
     except requests.exceptions.RequestException:
         logger.error(ErrorMessage.requestsexc, exc_info=True)
     return None
