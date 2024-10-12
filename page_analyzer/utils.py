@@ -34,7 +34,7 @@ class PageCheckError(PageAnalyzerError):
     pass
 
 
-def get_url_info(url_id):
+def get_url_info(url_id: int) -> dict:
     """
     Get URL info or return None if not found.
     """
@@ -44,12 +44,13 @@ def get_url_info(url_id):
     return url_info
 
 
-def perform_url_check(url_id) -> str:
+def perform_url_check(url_id: int) -> tuple:
     """
     Main function to check the status of a URL and handle the results.
     Raises custom exceptions in case of errors.
     """
     url_info = get_url_info(url_id)
+
     if not url_info:
         raise PageNotFound('URL not found')
 
@@ -71,7 +72,7 @@ class ErrorMessage(str, Enum):
     requestsexc = 'Request exception when checking the URL'
 
 
-def fetch_url(url):
+def fetch_url(url: str):
     """
     Fetch the URL and handle request errors.
     """
@@ -97,7 +98,8 @@ class ParseError(Exception):
     pass
 
 
-def parse_response(response, url):
+def parse_response(response, url: str):
+    print(type(response))
     """
     Parse the response to extract h1, title, and description.
     """
@@ -117,7 +119,13 @@ def parse_response(response, url):
         raise ParseError(f"Unexpected error parsing the URL {url}: {str(e)}")
 
 
-def save_to_database(url_id, status_code, h1, title, descr):
+def save_to_database(
+        url_id: int,
+        status_code: int,
+        h1: str,
+        title: str,
+        descr: str
+):
     """
     Save the check result into the database.
     """
